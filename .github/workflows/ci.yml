@@ -95,6 +95,7 @@ jobs:
               with:
                 projectBaseDir: .
                 args: >
+                    -Dsonar.organization=fleurdel34
                     -Dsonar.projectKey=Fleurdel34_P7-FSJA
                     -Dsonar.projectName=P7-FSJA
                     -Dsonar.sources=front/src,back/src/main/java
