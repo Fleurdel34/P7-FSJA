@@ -98,7 +98,7 @@ jobs:
                     -Dsonar.organization=fleurdel34
                     -Dsonar.projectKey=Fleurdel34_P7-FSJA
                     -Dsonar.projectName=P7-FSJA
-                    -Dsonar.sources=front/src,back/src/main/java
+                    -Dsonar.sources=front/src,back/src/java/main
                     -Dsonar.tests=back/src/test/java
                     -Dsonar.java.binaries=back/build/classes/java/main
                     -Dsonar.javascript.lcov.reportPaths=front/coverage/microcrm/lcov.info
