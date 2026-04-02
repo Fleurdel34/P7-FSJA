@@ -77,6 +77,19 @@ jobs:
           run: |
             cd back
             ./gradlew jacocoTestReport
+
+        #  update build backend and coverage reports frontend and backend for SonarQube analysis
+        - name: Upload backend build artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: backend-build
+            path: back/build
+
+        - name: Upload frontend coverage
+          uses: actions/upload-artifact@v4
+          with:
+            name: frontend-coverage
+            path: front/coverage
     
     #  SonarQube analysis
     sonarqube:
@@ -87,6 +100,18 @@ jobs:
               uses: actions/checkout@v4
               with:
                 fetch-depth: 0
+
+            - name: Download backend build artifacts
+              uses: actions/download-artifact@v4
+              with:
+                name: backend-build
+                path: back/build
+
+            - name: Download frontend coverage
+              uses: actions/download-artifact@v4
+              with:
+                name: frontend-coverage
+                path: front/coverage
 
             - name: SonarQube Scan
               uses: SonarSource/sonarqube-scan-action@v4
