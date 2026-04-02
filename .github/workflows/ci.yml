@@ -5,6 +5,7 @@ permissions:
     checks: write
     pull-requests: write
 
+
 on:
     push:
         branches:
@@ -88,7 +89,7 @@ jobs:
                 fetch-depth: 0
 
             - name: SonarQube Scan
-              uses: SonarSource/sonarqube-scan-action@v4.1.1
+              uses: SonarSource/sonarqube-scan-action@v4
               env:
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               with:
