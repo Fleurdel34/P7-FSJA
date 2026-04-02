@@ -1,0 +1,101 @@
+name: CI
+
+permissions:
+    contents: write
+    checks: write
+    pull-requests: write
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    
+jobs:
+    build_and_tests:
+        runs-on: ubuntu-latest 
+        steps:
+
+        - name: Checkout repository
+          uses: actions/checkout@v4 
+          
+        #  build Frontend Angular and tests
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with: 
+            node-version: 22.12.0
+            cache: 'npm'
+
+        - name: Install Chrome for Karma tests
+          uses: browser-actions/setup-chrome@v1    
+
+        - name: Install dependencies frontend
+          run: |
+            cd front
+            npm ci 
+
+        - name: Build frontend
+          run: |
+            cd front
+            npm run build
+        
+        - name: test frontend
+          run: |
+            cd front
+            npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+        #  build Backend Java/Gradle and tests    
+
+        - name: Setup Java
+          uses: actions/setup-java@v5
+          with: 
+            java-version: 17
+            distribution: temurin
+            cache: 'gradle'
+
+        - name: Make Gradle executable backend
+          run: |
+            cd back
+            chmod +x gradlew 
+
+        - name: Build backend
+          run: |
+            cd back
+            ./gradlew build -x test
+
+        - name: test backend
+          run: |
+            cd back
+            ./gradlew clean test
+
+        - name: Generate coverage report backend
+          run: |
+            cd back
+            ./gradlew jacocoTestReport
+    
+    #  SonarQube analysis
+    sonarqube:
+        needs: build_and_tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+
+            - name: SonarQube Scan
+              uses: SonarSource/sonarqube-scan-action@v4.1.0
+              env:
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                projectBaseDir: .
+                args: >
+                    -Dsonar.projectName=P7-FSJA
+                    -Dsonar.sources=front/src/,back/src/main/java
+                    -Dsonar.tests=back/src/test/java
+                    -Dsonar.javascript.lcov.reportPaths=front/coverage/microcrm/lcov.info
+                    -Dsonar.java.coveragePlugin=jacoco
+                    -Dsonar.jacoco.reportPaths=back/build/reports/jacoco/test/jacocoTestReport.xml                    
+                    -Dsonar.verbose=true
