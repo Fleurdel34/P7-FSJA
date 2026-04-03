@@ -1,4 +1,4 @@
-FROM node as front-build
+FROM node:18-alpine as front-build
 
 COPY ./front /src
 
@@ -12,6 +12,9 @@ FROM gradle:jdk17 as back-build
 COPY ./back /src
 
 WORKDIR /src
+
+RUN apt-get update && apt-get install -y dos2unix && dos2unix gradlew
+RUN find ./ -name "*.java" | xargs dos2unix
 
 RUN ./gradlew build
 
@@ -27,17 +30,17 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/usr/sbin/caddy", "run"]
+CMD ["caddy", "run", "--config", "/app/Caddyfile"]
 
 FROM alpine:3.19 as back
 
 COPY --from=back-build /src/build/libs/microcrm-0.0.1-SNAPSHOT.jar /app/back/microcrm-0.0.1-SNAPSHOT.jar
 
-RUN apk add openjdk21-jre-headless
+RUN apk add openjdk21-jre-headless 
 
 WORKDIR /app
 
-EXPOSE 4200
+EXPOSE 8080
 
 CMD ["java", "-jar", "/app/back/microcrm-0.0.1-SNAPSHOT.jar"]
 
@@ -45,6 +48,7 @@ FROM alpine:3.19 as standalone
 
 COPY --from=front / /
 COPY --from=back / /
+
 COPY misc/docker/supervisor.ini /app/supervisor.ini
 
 RUN apk add supervisor

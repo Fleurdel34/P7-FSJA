@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  fsja:
+    build: .
+    container_name: fullstack-java-angular-app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    restart: unless-stopped
