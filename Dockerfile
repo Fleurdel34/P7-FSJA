@@ -13,7 +13,7 @@ COPY ./back /src
 
 WORKDIR /src
 
-RUN apt-get update && apt-get install -y dos2unix && dos2unix gradlew
+RUN apt-get update && apt-get install -y dos2unix && dos2unix gradlew && chmod +x gradlew
 RUN find ./ -name "*.java" | xargs dos2unix
 
 RUN ./gradlew build
