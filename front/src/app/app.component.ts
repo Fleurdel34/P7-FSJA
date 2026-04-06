@@ -10,8 +10,4 @@ import { Router, RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'MicroCRM';
-  ngOnInit() {
-    throw new Error(" Test Logstash : error Angular error log");
-  }
-
 }
