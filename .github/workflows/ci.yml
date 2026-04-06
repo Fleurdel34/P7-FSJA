@@ -1,4 +1,4 @@
-name: CI
+name: CICD
 
 permissions:
     contents: write
@@ -129,7 +129,8 @@ jobs:
                     -Dsonar.javascript.lcov.reportPaths=front/coverage/microcrm/lcov.info
                     -Dsonar.java.coveragePlugin=jacoco
                     -Dsonar.coverage.jacoco.xmlReportPaths=back/build/reports/jacoco/test/jacocoTestReport.xml
-                    -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts                    
+                    -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts
+                    -Dsonar.coverage.exclusions=front/src/app/logging.service.ts,front/src/app/global-error-handler.ts                   
                     -Dsonar.verbose=true
 
     deploy_image_docker:
